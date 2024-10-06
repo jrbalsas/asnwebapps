@@ -7,6 +7,6 @@ http:
     wwwservers:
       loadBalancer:
         servers:
-        - url: http://loadbalancer_wwwserver_1/
-        - url: http://loadbalancer_wwwserver_2/
+        - url: http://loadbalancer-wwwserver-1/
+        - url: http://loadbalancer-wwwserver-2/
         healthCheck:
