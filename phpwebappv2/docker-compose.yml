@@ -9,7 +9,8 @@ services:
       - ./html:/var/www/html
     # limit resources for testing
     cpus: .25
-    mem_limit: 25m
+    mem_limit: 48m
+    memswap_limit: 48m  # Swap not allowed if this value is equal to mem_limit
 
     depends_on:
       - mariadb 
