@@ -139,17 +139,21 @@ spec:
     - protocol: TCP
       port: 80
       name: web
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: traefik-dashboard
-  namespace: traefik-controller
-spec:
-  type: NodePort
-  selector:
-    k8s-app: traefik-ingress-lb
-  ports:
+      #Public access to Stats console
     - protocol: TCP      
       port: 8080      
       name: admin
+---
+#kind: Service
+#apiVersion: v1
+#metadata:
+#  name: traefik-dashboard
+#  namespace: traefik-controller
+#spec:
+#  type: NodePort
+#  selector:
+#    k8s-app: traefik-ingress-lb
+#  ports:
+#    - protocol: TCP      
+#      port: 8080      
+#      name: admin
