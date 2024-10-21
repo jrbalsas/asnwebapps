@@ -17,7 +17,6 @@ spec:
       containers:
       - name: modsecurity-proxy
         image: jrbalsas/modsecurity:latest
-        #image: vshn/modsecurity
         imagePullPolicy: IfNotPresent
         env:
         - name: PORT #WAF port

@@ -16,7 +16,7 @@ spec:
         run: testapp 
     spec:
       containers:
-      - image: containous/whoami 
+      - image: traefik/whoami 
         imagePullPolicy: IfNotPresent
         name: testapp
         ports:
