@@ -1,4 +1,3 @@
-version: "2.4"
 services:
   sonarserver:
     image: sonarqube
@@ -12,7 +11,7 @@ services:
     environment:
       SONAR_HOST_URL: "http://sonarserver:9000"
       ## Replace with project login token generated in SonarQube server
-      SONAR_LOGIN: "03ec41cfb3c8a63c450dccf7ae55a0c562d96d3c"    
+      SONAR_TOKEN: "sqp_707ad845875c0ebfce91fdca7a567c2a9832972b"      
     volumes:
       ## Replace ../phpwebapp/html with your project source folder
       - ../phpwebapp/html:/usr/src
