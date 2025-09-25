@@ -19,7 +19,8 @@
 
 	if ( isset($_GET['id']) ) {
 		$vmodel['note']= $db->query($query." WHERE id=  {$_GET['id']}")
-							->fetch();
+					  ->fetch();
+		$vmodel['note']['npalabras']=shell_exec("echo ".$vmodel['note']['text']." | wc -w" );	
 		include('views/note.php');
 	} else {
 		$vmodel['notes'] = $db->query($query);
