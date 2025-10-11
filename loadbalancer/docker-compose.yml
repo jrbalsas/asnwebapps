@@ -1,45 +1,38 @@
 services:
-  haproxy:
-    image: asn/haproxy 
-    build: haproxy/
+  traefik:
+    image: traefik:v3.5
     ports:
       - "80:80"
+      - "8080:8080"
     volumes:
-      # HAProxy static config file
-      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
-
-#  nginx:
-#    image: asn/nginx
-#    build: nginx/
-#    ports:
-#      - "80:80"
-#    volumes:
-#      # NGinx static config file
-#      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-
-#  traefik:
-#    image: asn/traefik
-#    build: traefik/
-#    ports:
-#      - "80:80"
-#      - "8080:8080" # Web GUI
-#    volumes:
-#      # Traefik static config file
-#      - ./traefik/traefik.yml:/etc/traefik/traefik.yml                                                                        
-#      # Traefik provider config file
-#      - ./traefik/dynamic-conf.yml:/etc/traefik/dynamic-conf.yml  
-
+      # auto discovering of balanced nodes (docker provider)
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Traefik static config file
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml                                                                        
+      # Traefik static provider config file
+      - ./traefik/dynamic-conf.yml:/etc/traefik/dynamic-conf.yml  
+    labels:
+      # Node dynamic configuration using docker provider
+      - "traefik.enable=true"
+      # Define middlewares configuration
+      - "traefik.http.middlewares.asn-ipallowed.ipallowlist.sourceRange=127.0.0.1/32,192.168.0.0/24"
     depends_on:
       - wwwserver #LB should await for starting front-end server
+  
   wwwserver:
     image: traefik/whoami
     ports:
-      # Random external port for HTTP direct access 
-      - "80"
+          - "80"
     # number of replicas
     scale: 2
-    # limit resources for testing
-    cpus: 1
-    mem_limit: 128m
-    mem_reservation: 64m
-    oom_kill_disable: true #prevent stop containers when they reach their memory limit
+    # limit container resources for testing
+    cpus: .25
+    mem_limit: 48m
+    memswap_limit: 48m  # Swap not allowed if this value is equal to mem_limit
+
+    labels:
+      # Node dynamic configuration using docker provider and labels
+      - "traefik.enable=true"
+      - "traefik.http.routers.wwwserver.rule=PathPrefix(`/`)"
+      # Apply middlewares definitions to container (comma separated)
+#      - "traefik.http.routers.wwwserver.middlewares=asn-ipallowed"

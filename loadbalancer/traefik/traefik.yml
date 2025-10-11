@@ -1,15 +1,23 @@
 # Traefik config file (yaml version)
-# Enable api console http://localhost:8080
+# Enable api console on url http://localhost:8080
 api:
   insecure: true
   dashboard: true
   debug: true
+
 log:
   level: INFO # DEBUG 
+
 accessLog: {} # Show http requests
+
 providers:
-  file: #back-end servers configuration
+  file: #back-end static servers configuration
     filename: /etc/traefik/dynamic-conf.yml
-entryPoints:
- http:
-   address: ":80"
+#  docker: # enable docker dynamic container detection   
+#    exposedByDefault: false  # Process only containers with label "traefik.enable=true"
+
+# configure incoming conections
+entrypoints: 
+  web:
+    address: :80
+    transport:
