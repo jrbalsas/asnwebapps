@@ -1,0 +1,8 @@
+## metrics-server Helm chart config values
+## usage: 
+# $ kubectl create namespace metrics-server
+# $ helm install metrics-server metrics-server/metrics-server --namespace metrics-server -f ./metrics-server-helm-config.yml
+
+
+args: 
+  - --kubelet-insecure-tls
