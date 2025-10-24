@@ -1,13 +1,6 @@
-# Ingress controllers for Docker Kubernetes Engine
+# Ingress controllers resources for K8s
 
-Sample deployments for using ingress resources in DKE
+Sample deployments for using ingress resources in local K8s clusters. Currently only traefik helm based installation is recommended.
 
 ## Usage
-* Install Ingress controller
-```bash
-$ kubectl apply -f <ingress_folder> 
-```
-* Uninstall Ingress controller
-```bash
-$ kubectl delete -f <ingress_folder> 
-```
+* Execute automatized script `helm_install.sh` in traefik folder

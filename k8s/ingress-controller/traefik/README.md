@@ -1,8 +1,10 @@
 # Traefik ingress controller
 
-* Adapted from  https://doc.traefik.io/traefik/v2.10/routing/providers/kubernetes-ingress/
+* Adapted from  https://doc.traefik.io/traefik/getting-started/install-traefik/
 
-## Features
+## Requeriments
+* Functional local k8s cluster, e.g. kind, minikube
+* `helm` and 'kubectl' tools installed
 
-* Added IngressClass support for selecting Ingress-Controllers from ingress resources
-* Traefik dashboard console NodePort service available on port 8080
+## Usage 
+* Execute instalation script `helm_install.sh` for deploying an ingress controller based in Traefik load balance in a testing k8s cluster

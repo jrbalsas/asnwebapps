@@ -1,0 +1,17 @@
+## Traefik Helm chart config values
+## usage: 
+# $ kubectl create namespace traefik
+# $ helm install traefik traefik/traefik --namespace traefik -f ./traefik-helm-config.yml
+
+## Enable loadbalancer logs
+logs:
+  access:
+    enabled: true
+
+## Enables public dashboard (very insecure!!!)
+ingressRoute:
+  dashboard:
+    enabled: true
+#    matchRule: Path(`/dashboard`)
+    entryPoints:
+      - web
