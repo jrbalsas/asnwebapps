@@ -1,0 +1,15 @@
+## Disable all traffic between app pods (with label app: asn-app)
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: asn-deny-all
+spec:
+  podSelector:
+    matchLabels:
+      app: asn-app  # apply rule only to pods with this label
+
+  ## Disable L4 incoming traffic
+  ingress: []
+  
+  ## Disable L4 outgoing traffic
+  egress: []

@@ -1,0 +1,24 @@
+## Only accept incoming web requests
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: testapp-access
+  #namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      run: testapp # apply rule only to pods with this label
+  ingress: ## allow incomming traffic only to this destination ports ...
+  - ports:
+    - protocol: TCP
+      port: 80
+    - protocol: TCP
+      port: 443
+#    from:  # ... and, optional, if traffic arrives from pods with a specific label
+#      - podSelector:   
+#          matchLabels:
+#            role: bastion
+
+## By default all egress traffic from pod is allowed
+#  egress: []

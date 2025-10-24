@@ -1,0 +1,25 @@
+## Allow requests to internal DNS (for pods with label app: asn-app)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: asn-deny-internet-egress
+spec:
+  podSelector:
+    matchLabels:
+      app: asn-app  # apply rule only to pods with this label
+  policyTypes:
+  - Egress
+  egress:
+  # allow only DNS resolution from DNS pods in cluster
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+      - port: 53
+        protocol: UDP
+      - port: 53
+        protocol: TCP
