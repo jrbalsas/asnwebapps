@@ -3,9 +3,19 @@ kind: Ingress
 metadata:
   name: lb-ingress
 spec:
-  #Default backend service
-  defaultBackend:
-    service:
-      name: waf 
-      port:
-        number: 80
+#  #Default backend service
+#  defaultBackend:
+#    service:
+#      name: waf 
+#      port:
+#        number: 80
+  rules:
+  - http:
+      paths:
+      - path: /     
+        pathType: Prefix
+        backend:
+          service:
+            name: waf             
+            port:
+              number: 80

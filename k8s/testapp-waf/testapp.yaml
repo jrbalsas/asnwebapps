@@ -3,45 +3,46 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    run: testapp 
-  name: testapp 
+    run: testapp
+  name: testapp
 spec:
   replicas: 2
   selector:
     matchLabels:
-      run: testapp 
+      run: testapp
   template:
     metadata:
       labels:
-        run: testapp 
+        run: testapp
+        app: asn-app  # sample label to identity all the pods of a distributed app
     spec:
       containers:
       - image: traefik/whoami 
         imagePullPolicy: IfNotPresent
         name: testapp
+        args:
+          - --verbose
         ports:
         - containerPort: 80 
           protocol: TCP
-        # Adjust resources for deploying on GKE g1-instance
-        resources:
-          limits:
-            cpu: "50m"
-          requests:
-            cpu: "20m"
+        env: #Just an example, use configmap or secrets for values!
+          - name: ASN_VAR
+            value: valor_1
+
 ---
 # APP SERVICE
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    run: testapp 
-  name: testapp 
+    run: testapp
+  name: testapp
 spec:
   ports:
   - port: 80 
     protocol: TCP
     targetPort: 80 
   selector:
-    run: testapp 
+    run: testapp
   type: NodePort
 # type: LoadBalancer

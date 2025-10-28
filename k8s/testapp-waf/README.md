@@ -1,5 +1,12 @@
 # Sample Kubernetes deployment with WAF service
 
-## Warnings
+WAF based in `owasp/modsecurity-crs:nginx` container
 
-* The WAF deployment uses an image compatible with linux/amd64. If other architecture is required, e.g. linux/arm64 (Apple series M), regenerate it using Dockefile on ../waf folder and change it on k8s deployment file.
+
+## Usage
+
+* Configure WAF using environment variables and/or custom rule files in configMap file `waf-configmap.yaml`.
+* After apply changes in configMap it is neccesary to reload the WAF deployment to get new config falues:
+`$ kubectl rollout restart deployment/waf`
+
+More details in https://github.com/coreruleset/modsecurity-crs-docker

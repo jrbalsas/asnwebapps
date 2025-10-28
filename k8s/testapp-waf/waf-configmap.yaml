@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: waf-config
+data:
+
+## Modsecurity config env vars
+## https://github.com/coreruleset/modsecurity-crs-docker
+
+  # WAF port (non privileged, i.e. >1024)
+  PORT: "8080"
+  # Webservice URL.  
+  # BACKEND: "http://localhost:80" # default (sidecar mode)
+  BACKEND: "http://testapp:80"
+
+  MODSEC_RULE_ENGINE: "DetectionOnly"  # On/Off/DetectionOnly
+
+  BLOCKING_PARANOIA: "1"
+  # DETECTION_PARANOIA: "1" # default BLOCKING_PARANOIA
+  
+  # Detailed adjustment 
+  ANOMALY_INBOUND: "5"
+  ANOMALY_OUTBOUND: "4"
+
+  # Disable web requests logs
+  ACCESSLOG: /dev/null
+
+  # Show error mensajes in html/format
+  CORS_HEADER_403_CONTENT_TYPE: text/html
+
+## Modsecurity CRS Custom config files content
+
+  "rules-before-crs.conf": |
+    # Disable WAF on health-check url, i.e. /healthz
+    SecRule REQUEST_URI "@beginsWith /healthz" "phase:1,id:40003,nolog,allow,ctl:auditEngine=Off"
+
+  "rules-after-crs.conf": |
+    # Disable warning if no client ip hostname
+    SecRuleRemoveById 920350

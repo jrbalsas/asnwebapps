@@ -1,72 +1,78 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: waf 
+  name: waf
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: waf 
+      role: waf
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        name: waf 
+        app: asn-app
+        role: waf
     spec:
       containers:
       - name: modsecurity-proxy
-        image: jrbalsas/modsecurity:latest
+        image: owasp/modsecurity-crs:nginx
         imagePullPolicy: IfNotPresent
-        env:
-        - name: PORT #WAF port
-          value: "80"
-          # Webservice URL
-        - name: BACKEND
-          value: "http://testapp:80"
-        - name: RULE_ENGINE
-          value: "DetectionOnly"  #On/Off/DetectionOnly
-        - name: PARANOIA
-          value: "1"
-        # Detailed adjustment 
-        - name: ANOMALY_INBOUND
-          value: "5"
-        - name: ANOMALY_OUTBOUND
-          value: "4"
-        # Disable detailed logs
-        - name: APACHE_ACCESSLOG
-          value: "/dev/null"
-        - name: MODSEC_AUDIT_LOG
-          value: "/dev/null"
         ports:
-          - containerPort: 80
+          - containerPort: 8080
           # Limit resources for GKE g1-small instance
         resources:
           limits:
             cpu: 50m
+            memory: 150Mi
           requests:
             cpu: 20m
+            memory: 90Mi
         #GKE ingress uses readinessProbe for health checking
         readinessProbe:
           httpGet:
             path: /healthz
-            port: 80
+            port: 8080
           periodSeconds: 30
 #       livenessProbe:
 #         tcpSocket:
 #           port: 80
 #         initialDelaySeconds: 10
 #         timeoutSeconds: 10
+        envFrom:
+          ## Get modsecurity env vars from configmap
+          - configMapRef:
+              name: waf-config
+
+        volumeMounts:  # copy WAF config files with custom rules
+        - name: crs-custom-rules
+          mountPath: "/etc/modsecurity.d/owasp-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf"
+          subPath: REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
+        - name: crs-custom-rules
+          mountPath: "/etc/modsecurity.d/owasp-crs/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf"
+          subPath: RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf
+
+      volumes:
+        - name: crs-custom-rules
+          configMap:  # Get WAF custom config files from ConfigMap
+            name: waf-config            
+            items:
+            - key: "rules-before-crs.conf"
+              path: "REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf"
+            - key: "rules-after-crs.conf"
+              path: "RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf"
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: waf 
+  name: waf
 spec:
   selector:
-    name: waf 
+    role: waf
   ports:
     - port: 80
-      targetPort: 80
+      targetPort: 8080
       protocol: TCP
-  type: NodePort
+#  type: NodePort
