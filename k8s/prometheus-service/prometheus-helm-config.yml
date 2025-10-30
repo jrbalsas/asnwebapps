@@ -1,0 +1,21 @@
+alertmanager:
+  alertmanagerSpec:
+    routePrefix: /alertmanager
+  ingress:
+    enabled: true
+    paths: ['/alertmanager']
+grafana:
+  env:
+    GF_SERVER_ROOT_URL: /grafana
+    GF_SERVER_SERVE_FROM_SUB_PATH: 'true'
+  ingress:
+    enabled: true
+    path: "/grafana"
+  adminUser: admin
+  adminPassword: prom-operator
+prometheus:
+  prometheusSpec:
+    routePrefix: /prometheus
+  ingress:
+    enabled: true
+    paths: ['/prometheus']
