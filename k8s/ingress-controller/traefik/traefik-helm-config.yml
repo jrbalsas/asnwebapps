@@ -13,5 +13,6 @@ ingressRoute:
   dashboard:
     enabled: true
 #    matchRule: Path(`/dashboard`)
-    entryPoints:
+    entryPoints:      
       - web
+      - traefik
