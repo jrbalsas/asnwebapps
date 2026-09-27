@@ -29,6 +29,6 @@ $ make clean
 ```
 
 ## Options
-- Database detailes, e.g. database name and user credentials can be customized in `docker-compose.yml` file
+- Database detailes, e.g. database name and user credentials can be customized in `compose.yml` file
 - It can take some time for mariadb container to initialize the database on the first launch
 - `k8s` folder contains kubernetes config files for ingress loadbalancer and mariadb service deployment

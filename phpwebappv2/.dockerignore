@@ -1,5 +1,6 @@
 Makefile
 docker-compose.yml
+compose.yml
 README.md
 k8s/
 
