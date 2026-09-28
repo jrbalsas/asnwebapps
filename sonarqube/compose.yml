@@ -1,6 +1,6 @@
 services:
   sonarserver:
-    image: sonarqube
+    image: sonarqube:community
     environment:
       SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
     ports:
@@ -10,13 +10,13 @@ services:
     image: sonarsource/sonar-scanner-cli
     environment:
       SONAR_HOST_URL: "http://sonarserver:9000"
-      ## Replace with project login token generated in SonarQube server
+      ## Replace with project login token generated in SonarQube server or place it in sonar-project.properties file
       SONAR_TOKEN: "sqp_707ad845875c0ebfce91fdca7a567c2a9832972b"      
     volumes:
       ## Replace ../phpwebapp/html with your project source folder
-      - ../phpwebapp/html:/usr/src
+#      - ../phpwebapp/html:/usr/src
       ## Sample project source paths
-      #- ./src:/usr/src
+      - ./src:/usr/src
       #- /home/user/project:/usr/src
       #- c:/Users/project:/usr/src
 #    command: -Dsonar.projectKey="phpwebapp"
