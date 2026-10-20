@@ -1,10 +1,10 @@
 # Simple deployement with load balancer
 
-This docker-compose deployment launches a **Traefik** load balancer for allowing access to a backend web app.
+This docker compose deployment launches a **Traefik** load balancer for allowing access to a backend web app.
 
 ## Requeriments
 
-Docker, docker-compose, make
+Docker, make
 
 ## Usage
 

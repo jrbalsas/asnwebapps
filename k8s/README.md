@@ -2,27 +2,13 @@
 
 ## Requirements
 
-Kubernetes cluster, e.g. DKS, minikube, microk8s, ...
+Kubernetes cluster, e.g. DKS, kind, minikube, microk8s, ...
 
 ## Install local ingress controller
 
-`ingress-controller` folder contains diferent ingress controlers for using ingress resources in local clusters, e.g. in Docker Kubernetes System, DKS; minikube...
+`ingress-controller` folder contains diferent ingress controlers for using ingress resources in local clusters, e.g. in Docker Kubernetes System, DKS, kind, minikube...
 
-Example, installing nginx ingress-controller
-
-```bash
-$ kubectl apply -f ingress-controller/nginx/
-```
-
-### Warnings
-
-* Ingress controller may need some seconds to start before an ingress resource can be created
-* Make sure to install only one of the controllers because all of them are configured to be used as default controllers, i.e. Not IngressClass option needed. Uninstall previous ingress controlled if you want to test a new one, e.g.
-
-  ```
-  kubectl delete -f ingress-controller/nginx
-  kubectl apply -f ingress-controller/traefik
-  ```
+> Currently only traefik helm based installation is recommended.
 
 ## Deploy Samples
 

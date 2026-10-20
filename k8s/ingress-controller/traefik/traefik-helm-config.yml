@@ -4,15 +4,76 @@
 # $ helm install traefik traefik/traefik --namespace traefik -f ./traefik-helm-config.yml
 
 ## Enable loadbalancer logs
-logs:
-  access:
-    enabled: true
+accessLog:
+  enabled: true
 
-## Enables public dashboard (very insecure!!!)
+## Allow dashboard access using http (insecure, just for testing)
+api:
+  insecure: true
+
+## Enables dashboard (insecure, just for testing)
 ingressRoute:
   dashboard:
     enabled: true
-#    matchRule: Path(`/dashboard`)
-    entryPoints:      
-      - web
-      - traefik
+
+providers:
+  # Enable Kubernetes Ingress provider API
+  kubernetesIngress:
+    enabled: true
+  # Experimental Kubernetes Gateway API support. Requires install of the Gateway API CRDs 
+  # https://doc.traefik.io/traefik/getting-started/kubernetes/#exposing-the-application-using-the-gateway-api
+#  kubernetesGateway:
+#    enabled: false
+  # Disable Traefik Ingress Route provider
+  kubernetesCRD:
+    enabled: false
+
+#ports:
+#  # Publish dashboard service on port 8080 (insecure, just for testing)
+#  traefik:
+#    expose:
+#      default: true
+
+extraObjects:
+  # Service to expose the Traefik dashboard and API
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: traefik-api
+    spec:
+      type: ClusterIP
+      selector:
+        app.kubernetes.io/name: traefik
+        app.kubernetes.io/instance: traefik-traefik
+      ports:
+      - port: 8080
+        name: traefik
+        targetPort: 8080
+        protocol: TCP
+
+  # Ingress to expose the Traefik dashboard and API (insecure, just for testing)
+  - apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: traefik-dashboard
+#      annotations:
+#        traefik.ingress.kubernetes.io/router.entrypoints: websecure
+#        traefik.ingress.kubernetes.io/router.middlewares: default-traefik-dashboard-auth@kubernetescrd
+    spec:
+      rules:
+      - http:
+          paths:
+          - path: /dashboard
+            pathType: Prefix
+            backend:
+              service:
+                name: traefik-api
+                port:
+                  name: traefik
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: traefik-api
+                port:
+                  name: traefik

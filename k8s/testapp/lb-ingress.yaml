@@ -3,18 +3,25 @@ kind: Ingress
 metadata:
   name: lb-ingress
 spec:
-## Uncomment selected ingress controller
-#  ingressClassName: nginx
-#  ingressClassName: haproxy
-#  ingressClassName: traefik
-#  ingressClassName: gce #default in GKE
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: testapp
+            port:
+              number: 80
 
-  #Default backend service
-  defaultBackend:
-    service:
-      name: testapp
-      port:
-        number: 80
+#  #Default backend service
+#  defaultBackend:
+#    service:
+#      name: testapp
+#      port:
+#        number: 80
+
+
 
 #  ## Backend services
 #  rules:

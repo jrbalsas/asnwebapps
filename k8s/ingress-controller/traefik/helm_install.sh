@@ -7,7 +7,8 @@ helm repo add traefik https://traefik.github.io/charts
 
 helm repo update
 
-helm install traefik traefik/traefik --create-namespace -n traefik -f ./traefik-helm-config.yml
+echo "Installing traefik controller in k8s. Please wait..."
+helm install traefik traefik/traefik --create-namespace -n traefik -f ./traefik-helm-config.yml --wait
 
 kubectl get all -n traefik
 
