@@ -1,0 +1,110 @@
+# Valores del chart oficial HAProxy Kubernetes Ingress.
+# Chart: haproxytech/kubernetes-ingress
+# Versión utilizada: 1.54.3 (HAProxy Ingress Controller 3.2.17)
+
+rbac:
+  create: true
+
+serviceAccount:
+  create: true
+
+controller:
+  # Mantiene el comportamiento de la instalación manual actual.
+  kind: Deployment
+  replicaCount: 1
+
+  # Ejecuta el controlador sin privilegios de root.
+  unprivileged: true
+  allowPrivilegeEscalation: false
+  enableRuntimeDefaultSeccompProfile: true
+
+  # IngressClass que gestionará este controlador.
+  ingressClass: haproxy
+  ingressClassResource:
+    name: haproxy
+    default: true
+
+  # Configuración equivalente al ConfigMap de la instalación manual.
+  config:
+    ssl-redirect-port: "443"
+
+  # Publica la dirección del Service en el status de los Ingress.
+  publishService:
+    enabled: true
+
+  service:
+    enabled: true
+    type: LoadBalancer
+    externalTrafficPolicy: Local
+
+    ports:
+      http: 80
+      https: 443
+      stat: 1024
+
+    enablePorts:
+      http: true
+      https: true
+      stat: true
+      # No se exponen puertos adicionales del chart para conservar
+      # la superficie de la instalación manual.
+      quic: false
+      admin: false
+
+    targetPorts:
+      http: http
+      https: https
+      stat: stat
+
+  # El endpoint de métricas se mantiene habilitado por defecto y se sirve
+  # en el puerto de estadísticas.
+  prometheus:
+    enabled: true
+
+  # La consola de estadísticas se expone mediante el puerto 1024 del Service.
+  pprof:
+    enabled: false
+
+extraObjects:
+  # JR: Service to expose the HAProxy dashboard (insecure, just for testing)
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: haproxy-dashboard
+    spec:
+      type: ClusterIP
+      selector:
+        app.kubernetes.io/name: kubernetes-ingress
+        app.kubernetes.io/instance: haproxy-ingress
+      ports:
+      - port: 1024
+        name: haproxy-stats
+        targetPort: 1024
+        protocol: TCP
+
+  # Ingress to expose the HAProxy dashboard and API (insecure, just for testing)
+  - apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: haproxy-dashboard-ingress
+#      annotations:
+#        traefik.ingress.kubernetes.io/router.entrypoints: websecure
+#        traefik.ingress.kubernetes.io/router.middlewares: default-traefik-dashboard-auth@kubernetescrd
+    spec:
+      rules:
+      - http:
+         paths:
+          - path: /dashboard
+            pathType: Prefix
+            backend:
+              service:
+                name: haproxy-dashboard
+                port:
+                  name: haproxy-stats
+#          - path: /api
+#            pathType: Prefix
+#            backend:
+#              service:
+#                name: traefik-api
+#                port:
+#                  name: traefik
