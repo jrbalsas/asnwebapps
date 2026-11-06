@@ -8,6 +8,10 @@ spec:
     matchLabels:
       app: asn-app  # apply rule only to pods with this label
 
+  policyTypes: # Specify the types of traffic to be controlled
+  - Ingress
+  - Egress
+
   ## Disable L4 incoming traffic
   ingress: []
   
