@@ -16,8 +16,12 @@ spec:
         matchLabels:
           kubernetes.io/metadata.name: kube-system
       podSelector:
-        matchLabels:
-          k8s-app: kube-dns
+        matchExpressions:
+          - key: k8s-app
+            operator: In
+            values:
+              - kube-dns        # cluster DNS pod
+              - node-local-dns  # per node cache DNS pods in GKE clusters
     ports:
       - port: 53
         protocol: UDP
